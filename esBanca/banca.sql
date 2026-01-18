@@ -1,22 +1,5 @@
 -- Si vogliono gestire i dati dei clienti e dei relativi conti correnti di una banca. Le entità individuate e i relativi attributi sono: CONTO: ID, Saldo MOVIMENTO: ID, Datam, Causale, Importo CLIENTE: ID, Cognome, Nome, Sesso CITTA: ID, NomeCitta, Cap  Progettare il modello concettuale (diagramma Entity-Relation)  Definire il modello logico  Implementare il modello fisico inserendo i dati contenuti nelle tabelle sottostanti  Realizzare le seguenti query:
 
-
-
--- Elenco clienti con saldo superiore a 50000
--- Elenco clienti di Rubiera
--- Città e CAP del cliente Algeri
--- Visualizzare il saldo di un dato cliente (inserire cognome e nome)
--- Elenco dei clienti (solo cognome e nome) ordinati alfabeticamente per cognome
--- Elenco dei conti con relativo saldo ordinati per saldo dal maggiore al minore
--- Dettaglio operazioni effettuate sul conto con codice 1 visualizzando data, tipo di operazione e importo
--- Elenco di tutti i prelievi (data e importo) sul conto con codice 2
--- Elenco di tutti i versamenti di Buttiglieri (data e importo)
--- Elenco di tutti i movimenti effettuati dal 01/10/2019
--- Elenco di tutti i versamenti effettuati prima del 20/10/2019
--- Elenco di tutti i prelievi effettuati dal 01/10/2019 al 20/10/2019 con importo>100
--- Elencare il cognome e il nome del cliente con tutte le operazioni realizzate nel mese di settembre 2019
--- Elencare tutti i clienti il cui cognome inizia con la lettera B
-
 CREATE DATABASE IF NOT EXISTS banca;
 USE banca;
 
@@ -114,3 +97,105 @@ FROM CONTO
 WHERE Saldo>1500;
 
 -- Riepilogo elenco clienti con saldo
+SELECT *
+FROM cliente NATURAL join conto
+
+-- Elenco clienti con saldo superiore a 50000
+SELECT Nome, Cognome
+FROM cliente NATURAL JOIN conto
+WHERE conto.`Saldo` > 50000
+
+-- Elenco clienti di Rubiera
+SELECT Nome, Cognome
+FROM cliente NATURAL JOIN citta
+WHERE citta.`NomeCitta` LIKE 'Rubiera';
+
+-- Città e CAP del cliente Algeri
+SELECT `NomeCitta`, `Cap`
+FROM citta natural join cliente
+where cliente.`Cognome` LIKE 'Algeri'
+
+
+-- Visualizzare il saldo di un dato cliente (inserire cognome e nome)
+Select `Saldo`
+from conto natural join cliente
+where cliente.`Cognome` = :Cognome AND cliente.nome = :Nome;
+
+-- Elenco dei clienti (solo cognome e nome) ordinati alfabeticamente per cognome
+Select nome, cognome
+from cliente
+order by cognome;
+
+-- Elenco dei conti con relativo saldo ordinati per saldo dal maggiore al minore
+select *
+from conto
+order by `Saldo` DESC
+
+-- Dettaglio operazioni effettuate sul conto con codice 1 visualizzando data, tipo di operazione e importo
+select `Datam`, `Causale`, `Importo`
+from movimento 
+WHERE `IDConto` = 1;
+
+-- Elenco di tutti i prelievi (data e importo) sul conto con codice 2
+select `Importo`, `Datam`
+from movimento
+where `IDConto` = 2 AND (movimento.`Causale` LIKE 'P')
+
+-- Elenco di tutti i versamenti di Buttiglieri (data e importo)
+
+-------------------------------------------------------------------------------------------------
+SELECT *
+from movimento natural join cliente
+where cliente.`Cognome` LIKE 'Buttiglieri' AND movimento.`Causale` LIKE 'V' AND movimento.`IDConto` = 2
+-------------------------------------------------------------------------------------------------
+
+-- Elenco di tutti i movimenti effettuati dal 01/10/2019
+select *
+from movimento
+where movimento.`Datam` > '2019-10-1'
+
+-- Elenco di tutti i versamenti effettuati prima del 20/10/2019
+select *
+from movimento
+where movimento.`Datam` < '2019-10-20'
+
+-- Elenco di tutti i prelievi effettuati dal 01/10/2019 al 20/10/2019 con importo>100
+select *
+from movimento
+where (movimento.`Causale` LIKE 'P') AND `Datam` BETWEEN ('2019-10-1' AND '2019-10-20') AND movimento.`Importo` > 100
+
+-- Elencare il cognome e il nome del cliente con tutte le operazioni realizzate nel mese di settembre 2019
+select cognome, nome
+from cliente natural join movimento
+where movimento.`Datam` BETWEEN '2019-09-01' AND '2019-09-30'
+
+-- Elencare tutti i clienti il cui cognome inizia con la lettera B
+select nome
+from cliente
+where cognome LIKE 'B%'
+
+-- 19. Contare le operazioni eseguite nell’ultimo trimestre
+
+-- 20. Totale degli importi delle operazioni eseguite nell’ultimo semestre suddivise in prelievi e
+-- versamenti
+
+-- 21. Contare il numero dei clienti di sesso maschile e di sesso femminile
+select count(`Sesso`) as numeroMaschi
+from cliente 
+where `Sesso` = 'M'
+
+select count(Sesso) as numeroDonne
+from cliente 
+where `Sesso` = 'F'
+
+-- 22. Calcolare quante femmine hanno svolto operazioni prima di una data prefissata
+SET @DataPrefissta := '2024-08-19'
+
+select count('Sesso') as numeroDonne
+from cliente natural join movimento m
+where m.`ID` NOT NULL AND cliente.`Sesso` = 'F' and m.`Datam`<@DataPrefissata 
+
+-- 23. Trovare la media degli importi dei movimenti di ciascun cliente
+select nome, AVG(movimento.`Importo`) as mediaImporti
+from cliente natural join movimento
+
