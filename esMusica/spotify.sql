@@ -1,3 +1,4 @@
+-- Active: 1764407004584@@127.0.0.1@3306@spotify
 CREATE DATABASE IF NOT EXISTS SPOTIFY;
 USE SPOTIFY;
 
@@ -146,6 +147,8 @@ FROM artista a join registrazione r on a.id = r.idartista
                join interpretare i on r.id = i.idregistrazione
                join brano b on b.id = i.idbrano
 where b.durata <= 2;
+--con group by id
+--GROUP BY a.id;
 
 --Visualizzate tutti gli artisti il cui nome inizia con la lettera R
 select a.nome, a.cognome
@@ -154,7 +157,6 @@ where a.nome = "R%";
 
 --Visualizzate la media dei costi di tutte le 
 --registrazioni di un determinato artista
-
 
 select avg(r.costo)
 FROM registrazione r join artista a on r.idartista = a.id
@@ -166,3 +168,9 @@ where a.nome = :nome and a.cognome = :cognome;
 select DISTINCT brano.durata
 from brano
 ORDER BY durata desc
+
+--conoscere i cognomi degli artisti che hanno meno di due registrazioni
+select count(*) as numeroRegistrazioni, a.cognome
+from artista a join registrazione r on a.id = r.idartista
+group by a.id
+having numeroRegistrazioni < 2;
