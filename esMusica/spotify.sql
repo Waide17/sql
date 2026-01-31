@@ -105,3 +105,64 @@ VALUES
 (15, 15, 9),
 (16, 16, 10),
 (17, 17, 11);
+
+SELECT b.titolo
+FROM artista a join registrazione r on a.id = r.idartista
+               join interpretare i on r.id = i.idregistrazione
+               join brano b on b.id = i.idbrano
+WHERE a.nome = :nome and a.cognome = :cognome;
+
+SELECT count(*)
+from artista
+where artista.nazionalita = "italiana";
+
+--Visualizzate il costo totale dei cd di un determinato cantante
+
+SELECT sum(r.costo)
+from artista a join registrazione r on a.id = r.idartista
+where a.nome = :nome and a.cognome = :cognome;
+
+--Individuare qual è l’artista di un determinato brano
+select a.nome, a.cognome
+FROM artista a join registrazione r on a.id = r.idartista
+               join interpretare i on r.id = i.idregistrazione
+               join brano b on b.id = i.idbrano
+where b.titolo = :titolo;
+
+--Individuare quali e quanti sono i brani appartenenti ad un determinato genere
+select b.titolo, r.genere
+FROM brano b join interpretare i on b.id = i.idbrano
+join registrazione r on i.idregistrazione = r.id
+where r.genere = :genere;
+
+--Conoscere l’elenco degli artisti ordinato in modo crescente
+select a.nome, a.cognome
+from artista a
+order by cognome asc
+
+--Visualizzate gli artisti che hanno brani che durano non più di 2 min.
+select DISTINCT a.nome, a.cognome
+FROM artista a join registrazione r on a.id = r.idartista
+               join interpretare i on r.id = i.idregistrazione
+               join brano b on b.id = i.idbrano
+where b.durata <= 2;
+
+--Visualizzate tutti gli artisti il cui nome inizia con la lettera R
+select a.nome, a.cognome
+from artista a
+where a.nome = "R%";
+
+--Visualizzate la media dei costi di tutte le 
+--registrazioni di un determinato artista
+
+
+select avg(r.costo)
+FROM registrazione r join artista a on r.idartista = a.id
+where a.nome = :nome and a.cognome = :cognome;
+
+--Visualizzate tutte le durate dei brani in ordine decrescente.
+-- Ciascuna durata deve essere visualizzata una sola volta
+
+select DISTINCT brano.durata
+from brano
+ORDER BY durata desc
