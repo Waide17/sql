@@ -1,5 +1,5 @@
 
-![SchemaE-R](https://github.com/Waide17/sql/tree/main/esRisorseUmane/er.PNG "modello er")
+![SchemaE-R](https://github.com/Waide17/sql/blob/main/esRisorseUmane/er.PNG "modello er")
 
 I managers della multinazionale ti chiedono inoltre di realizzare le seguenti query, al fine di agevolare
 il monitoraggio dei propri dipendenti:
