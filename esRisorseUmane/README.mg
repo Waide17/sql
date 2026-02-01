@@ -1,5 +1,5 @@
 
-![Schema E-R](er.png)
+![Schema E-R](https://github.com/Waide17/sql/tree/main/esRisorseUmane/er.PNG)
 
 I managers della multinazionale ti chiedono inoltre di realizzare le seguenti query, al fine di agevolare
 il monitoraggio dei propri dipendenti:
