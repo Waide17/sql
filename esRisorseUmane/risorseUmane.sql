@@ -1,4 +1,4 @@
--- Active: 1764407004584@@127.0.0.1@3306@risorseumane
+-- Active: 1769957597443@@127.0.0.1@3306@risorseumane
 -- ============================================
 -- DUMP COMPLETO DATABASE risorseUmane
 -- Con CREATE TABLE e INSERT DATA
@@ -345,11 +345,33 @@ from departments d join employees e on d.`ID` = e.`IDdepartments`
 group by d.`ID`;
 
 -- 5. mostrare per ogni department, la somma e la media (arrotondata a 2 cifre) dei salari pagati 
+select d.department_name, round(sum(e.salary),2) as sommaSalari, round(avg(e.salary),2) as mediaSalari
+from departments d join employees e on d.`ID` = e.`IDdepartments`
+group by d.`ID`;
 -- 6. mostrare per ogni manager (basta id) che ne ha più di 4, il numero ordinato decrescente dei 
 -- -- suoi sottoposti 
+select e.IDmanager, count(*) as numeroSottoposti
+from employees e
+where e.IDmanager is not null
+group by e.IDmanager
+having numeroSottoposti > 4
+order by numeroSottoposti desc;
 -- 7. mostrare i dipartimenti (basta id) che hanno la somma dei salari compresa tra 20000 e 30000 
 -- -- euro, ordinati in modo crescente 
+select d.`ID`
+from departments d join employees e on d.`ID` = e.`IDdepartments`
+group by d.`ID`
+having sum(e.salary) between 20000 and 30000
+order by sum(e.salary);
 -- 8. mostrare i dipartimenti che hanno la media dei salari compresa tra 5000 e 7000 euro, ordinati 
 -- -- in modo crescente 
+select d.`ID`
+from departments d join employees e on d.`ID` = e.`IDdepartments`
+group by d.`ID`
+having avg(e.salary) between 5000 and 7000
+order by avg(e.salary);
 -- 9. mostrare i country che hanno i codici US, UK e CN e le relative locations
+select c.`ID`, c.`country_name`, l.`ID` as location_id
+from countries c join locations l on c.`ID` = l.`IDcountries`
+where c.`country_code` in ('US', 'UK', 'CN');
 
