@@ -1,5 +1,7 @@
 
-![Schema database](images/er.PNG)
+<p align="center">
+  <img src="images/er.png" width="500">
+</p>
 
 I managers della multinazionale ti chiedono inoltre di realizzare le seguenti query, al fine di agevolare
 il monitoraggio dei propri dipendenti:
