@@ -1,17 +1,7 @@
--- Active: 1769957597443@@127.0.0.1@3306@risorseumane
--- ============================================
--- DUMP COMPLETO DATABASE risorseUmane
--- Con CREATE TABLE e INSERT DATA
--- Convenzione: ID INT(5) AUTO_INCREMENT + IDnometabella per FK
--- ============================================
-
-DROP DATABASE IF EXISTS risorseUmane;
+-- Active: 1769795033769@@127.0.0.1@3306@risorseumane
 CREATE DATABASE risorseUmane;
 USE risorseUmane;
 
--- ============================================
--- Tabella REGIONS
--- ============================================
 CREATE TABLE regions (
     ID INT(5) AUTO_INCREMENT PRIMARY KEY,
     region_name VARCHAR(50) NOT NULL
@@ -23,10 +13,6 @@ INSERT INTO regions(ID,region_name) VALUES (2,'Americas');
 INSERT INTO regions(ID,region_name) VALUES (3,'Asia');
 INSERT INTO regions(ID,region_name) VALUES (4,'Middle East and Africa');
 
-
--- ============================================
--- Tabella COUNTRIES
--- ============================================
 CREATE TABLE countries (
     ID INT(5) AUTO_INCREMENT PRIMARY KEY,
     country_id VARCHAR(2) NOT NULL UNIQUE,
@@ -64,10 +50,6 @@ INSERT INTO countries(ID,country_id,country_name,IDregions) VALUES (23,'US','Uni
 INSERT INTO countries(ID,country_id,country_name,IDregions) VALUES (24,'ZM','Zambia',4);
 INSERT INTO countries(ID,country_id,country_name,IDregions) VALUES (25,'ZW','Zimbabwe',4);
 
-
--- ============================================
--- Tabella LOCATIONS
--- ============================================
 CREATE TABLE locations (
     ID INT(5) AUTO_INCREMENT PRIMARY KEY,
     location_id INT(5) NOT NULL UNIQUE,
@@ -90,10 +72,6 @@ INSERT INTO locations(ID,location_id,street_address,postal_code,city,state_provi
 INSERT INTO locations(ID,location_id,street_address,postal_code,city,state_province,IDcountries) VALUES (6,2500,'Magdalen Centre, The Oxford Science Park','OX9 9ZB','Oxford','Oxford',22);
 INSERT INTO locations(ID,location_id,street_address,postal_code,city,state_province,IDcountries) VALUES (7,2700,'Schwanthalerstr. 7031','80925','Munich','Bavaria',8);
 
-
--- ============================================
--- Tabella JOBS
--- ============================================
 CREATE TABLE jobs (
     ID INT(5) AUTO_INCREMENT PRIMARY KEY,
     job_title VARCHAR(50) NOT NULL UNIQUE,
@@ -124,10 +102,6 @@ INSERT INTO jobs(ID,job_title,min_salary,max_salary) VALUES (17,'Shipping Clerk'
 INSERT INTO jobs(ID,job_title,min_salary,max_salary) VALUES (18,'Stock Clerk',2000.00,5000.00);
 INSERT INTO jobs(ID,job_title,min_salary,max_salary) VALUES (19,'Stock Manager',5500.00,8500.00);
 
-
--- ============================================
--- Tabella DEPARTMENTS
--- ============================================
 CREATE TABLE departments (
     ID INT(5) AUTO_INCREMENT PRIMARY KEY,
     department_name VARCHAR(50) NOT NULL UNIQUE,
@@ -150,10 +124,6 @@ INSERT INTO departments(ID,department_name,IDlocations) VALUES (9,'Executive',1)
 INSERT INTO departments(ID,department_name,IDlocations) VALUES (10,'Finance',1);
 INSERT INTO departments(ID,department_name,IDlocations) VALUES (11,'Accounting',1);
 
-
--- ============================================
--- Tabella EMPLOYEES
--- ============================================
 CREATE TABLE employees (
     ID INT(5) AUTO_INCREMENT PRIMARY KEY,
     employee_id INT(5) NOT NULL UNIQUE,
@@ -220,10 +190,6 @@ INSERT INTO employees(ID,employee_id,first_name,last_name,email,phone_number,hir
 INSERT INTO employees(ID,employee_id,first_name,last_name,email,phone_number,hire_date,IDjobs,salary,IDmanager,IDdepartments) VALUES (39,205,'Shelley','Higgins','shelley.higgins@sqltutorial.org','515.123.8080','1994-06-07',2,12000.00,2,11);
 INSERT INTO employees(ID,employee_id,first_name,last_name,email,phone_number,hire_date,IDjobs,salary,IDmanager,IDdepartments) VALUES (40,206,'William','Gietz','william.gietz@sqltutorial.org','515.123.8181','1994-06-07',1,8300.00,39,11);
 
-
--- ============================================
--- Tabella JOB_HISTORY
--- ============================================
 CREATE TABLE job_history (
     ID INT(5) AUTO_INCREMENT PRIMARY KEY,
     IDemployees INT(5) NOT NULL,
@@ -257,10 +223,6 @@ INSERT INTO job_history (ID, IDemployees, start_date, end_date, IDjobs, IDdepart
 (9, 28, '1999-01-01', '1999-12-31', 15, 8),
 (10, 34, '1994-07-01', '1998-12-31', 6, 11);
 
-
--- ============================================
--- Tabella DEPENDENTS
--- ============================================
 CREATE TABLE dependents (
     ID INT(5) AUTO_INCREMENT PRIMARY KEY,
     dependent_id INT(5) NOT NULL UNIQUE,
@@ -305,10 +267,6 @@ INSERT INTO dependents(ID,dependent_id,first_name,last_name,relationship,IDemplo
 INSERT INTO dependents(ID,dependent_id,first_name,last_name,relationship,IDemployees) VALUES (29,29,'Alec','Partners','Child',27);
 INSERT INTO dependents(ID,dependent_id,first_name,last_name,relationship,IDemployees) VALUES (30,30,'Sandra','Taylor','Child',28);
 
-
--- ============================================
--- INDICI per migliorare le performance
--- ============================================
 CREATE INDEX idx_countries_region ON countries(IDregions);
 CREATE INDEX idx_locations_country ON locations(IDcountries);
 CREATE INDEX idx_departments_location ON departments(IDlocations);
@@ -319,59 +277,77 @@ CREATE INDEX idx_employees_email ON employees(email);
 CREATE INDEX idx_job_history_employee ON job_history(IDemployees);
 CREATE INDEX idx_dependents_employee ON dependents(IDemployees);
 
+-- 1. mostrare per ogni department (basta id), il totale degli employee che ci lavorano, ordinato in modo decrescente
+SELECT d.ID, count(*) as numero_dipendenti
+FROM departments d JOIN employees e ON d.ID=e.IDdepartments
+GROUP BY d.ID
+ORDER BY numero_dipendenti DESC;
 
--- ============================================
--- FINE DUMP
--- ============================================
--- -- 1. mostrare per ogni department (basta id), il totale degli employee che ci lavorano, ordinato in 
--- -- modo decrescente 
+-- 3. mostrare  per  ogni  department  che  ha  più  di 5  employee,  il  totale  degli  employee  che  ci  lavorano, ordinato in modo crescente
+SELECT d.department_name, COUNT(*) as numero_dipendenti
+FROM departments d JOIN employees e ON d.ID=e.IDdepartments
+GROUP BY d.ID
+having numero_dipendenti > 5
+ORDER BY numero_dipendenti;
 
-SELECT d.`ID`, count(*) as numeroDipendenti
-from departments d join employees e on d.`ID` = e.`IDdepartments`
-group by d.`ID`
-order by numeroDipendenti desc;
--- 3. mostrare  per  ogni  department  che  ha  più  di  5  employee,  il  totale  degli  employee  che  ci  
--- -- lavorano, ordinato in modo crescente 
-SELECT d.`ID`, count(*) as numeroDipendenti
-from departments d join employees e on d.`ID` = e.`IDdepartments`
-group by d.`ID`
-HAVING numeroDipendenti > 5
-order by numeroDipendenti;
+-- 4. mostrare per ogni department, il massimo e il minimo dei salari pagati
+SELECT d.department_name, max(e.salary) as max_salary, min(e.salary) as min_salary
+FROM departments d JOIN employees e ON d.ID=e.IDdepartments
+GROUP BY d.ID;
 
--- 4. mostrare per ogni department, il massimo e il minimo dei salari pagati 
+-- 5. mostrare per ogni department, la somma e la media (arrotondata a 2 cifre) dei salari pagati
+SELECT sum(e.salary) as sum_salary, round(avg(e.salary),2) as avg_salary
+FROM departments d JOIN employees e ON d.ID=e.IDdepartments
+GROUP BY d.ID;
 
-select d.department_name, min(e.salary) as minSalary, max(e.salary) as maxSalary
-from departments d join employees e on d.`ID` = e.`IDdepartments`
-group by d.`ID`;
+-- 6. mostrare per ogni manager (basta id) che ne ha più di 4, il numero ordinato decrescente dei suoi sottoposti
+SELECT e.IDmanager AS manager_id, COUNT(*) AS numero_sottoposti
+FROM employees e
+WHERE e.IDmanager IS NOT NULL
+GROUP BY e.IDmanager
+HAVING numero_sottoposti > 4
+ORDER BY numero_sottoposti DESC;
 
--- 5. mostrare per ogni department, la somma e la media (arrotondata a 2 cifre) dei salari pagati 
-select d.department_name, round(sum(e.salary),2) as sommaSalari, round(avg(e.salary),2) as mediaSalari
-from departments d join employees e on d.`ID` = e.`IDdepartments`
-group by d.`ID`;
--- 6. mostrare per ogni manager (basta id) che ne ha più di 4, il numero ordinato decrescente dei 
--- -- suoi sottoposti 
-select e.IDmanager, count(*) as numeroSottoposti
-from employees e
-where e.IDmanager is not null
-group by e.IDmanager
-having numeroSottoposti > 4
-order by numeroSottoposti desc;
--- 7. mostrare i dipartimenti (basta id) che hanno la somma dei salari compresa tra 20000 e 30000 
--- -- euro, ordinati in modo crescente 
-select d.`ID`
-from departments d join employees e on d.`ID` = e.`IDdepartments`
-group by d.`ID`
-having sum(e.salary) between 20000 and 30000
-order by sum(e.salary);
--- 8. mostrare i dipartimenti che hanno la media dei salari compresa tra 5000 e 7000 euro, ordinati 
--- -- in modo crescente 
-select d.`ID`
-from departments d join employees e on d.`ID` = e.`IDdepartments`
-group by d.`ID`
-having avg(e.salary) between 5000 and 7000
-order by avg(e.salary);
+-- 7. mostrare i dipartimenti (basta id) che hanno la somma dei salari compresa tra 20000 e 30000 euro, ordinati in modo crescente
+SELECT e.IDdepartments AS department_id, SUM(e.salary) AS totale_salari
+FROM employees e
+GROUP BY e.IDdepartments
+HAVING SUM(e.salary) BETWEEN 20000 AND 30000
+ORDER BY totale_salari;
+
+-- 8. mostrare i dipartimenti che hanno la media dei salari compresa tra 5000 e 7000 euro, ordinati in modo crescente
+SELECT e.IDdepartments AS department_id, avg(e.salary) AS avg_salari
+FROM employees e
+GROUP BY e.IDdepartments
+HAVING avg(e.salary) BETWEEN 5000 AND 7000
+ORDER BY avg_salari;
+
 -- 9. mostrare i country che hanno i codici US, UK e CN e le relative locations
-select c.`ID`, c.`country_name`, l.`ID` as location_id
-from countries c join locations l on c.`ID` = l.`IDcountries`
-where c.`country_code` in ('US', 'UK', 'CN');
+SELECT c.country_id, c.country_name, l.city
+FROM countries c
+JOIN locations l ON l.IDcountries = c.ID
+WHERE c.country_id IN ('US', 'UK', 'CN')
+ORDER BY c.country_id;
 
+-- 10. mostrare, ordinati, i country che non hanno locations
+SELECT c.country_id, c.country_name
+FROM countries c
+LEFT JOIN locations l ON l.IDcountries = c.ID
+WHERE l.ID IS NULL
+ORDER BY c.country_name;
+
+-- 11. mostrare region, country e le relative locations di quei country che hanno i codici IT, DE, CA e FR
+SELECT r.region_name, c.country_name, l.location_id, l.city
+FROM regions r
+JOIN countries c ON c.IDregions = r.ID
+JOIN locations l ON l.IDcountries = c.ID
+WHERE c.country_id IN ('IT', 'DE', 'CA', 'FR')
+ORDER BY r.region_name, c.country_name;
+
+
+-- 12. mostrare per ogni department il totale degli employee che ci lavorano
+SELECT d.ID, d.department_name, COUNT(e.ID) AS numero_dipendenti
+FROM departments d
+LEFT JOIN employees e ON e.IDdepartments = d.ID
+GROUP BY d.ID, d.department_name
+ORDER BY numero_dipendenti DESC;
