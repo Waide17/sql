@@ -314,7 +314,6 @@ WHERE e.IDmanager IS NOT NULL
 GROUP BY e.IDmanager
 HAVING numero_sottoposti > 4
 ORDER BY numero_sottoposti DESC;
-
 -- 7. mostrare i dipartimenti (basta id) che hanno la somma dei salari compresa tra 20000 e 30000 euro, ordinati in modo crescente
 SELECT e.IDdepartments AS department_id, SUM(e.salary) AS totale_salari
 FROM employees e
