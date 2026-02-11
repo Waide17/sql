@@ -1,8 +1,8 @@
--- Active: 1769795033769@@127.0.0.1@3306@risorseumane
-CREATE DATABASE risorseUmane;
+-- Active: 1770801048744@@127.0.0.1@3306@risorseumane
+CREATE DATABASE if not EXISTS risorseUmane;
 USE risorseUmane;
 
-CREATE TABLE regions (
+CREATE TABLE if not exists regions (
     ID INT(5) AUTO_INCREMENT PRIMARY KEY,
     region_name VARCHAR(50) NOT NULL
 ) ENGINE=InnoDB;
