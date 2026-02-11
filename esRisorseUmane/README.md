@@ -1,5 +1,5 @@
 
-![Schema database]("images/schema_db.png")
+![Schema database](images/schema_db.png)
 
 I managers della multinazionale ti chiedono inoltre di realizzare le seguenti query, al fine di agevolare
 il monitoraggio dei propri dipendenti:
