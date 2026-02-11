@@ -278,8 +278,15 @@ CREATE INDEX idx_job_history_employee ON job_history(IDemployees);
 CREATE INDEX idx_dependents_employee ON dependents(IDemployees);
 
 -- 1. mostrare per ogni department (basta id), il totale degli employee che ci lavorano, ordinato in modo decrescente
-SELECT d.ID, count(*) as numero_dipendenti
-FROM departments d JOIN employees e ON d.ID=e.IDdepartments
+select e.IDdepartments, count(*) as tot_employee
+from employees e
+group by e.IDdepartments
+order by tot_employee DESC;
+
+--2. mostrare  per  ogni  department,  il  totale  degli  employee  che  ci  lavorano,  ordinato  in  modo  
+--decrescente
+SELECT d.department_name, count(*) as numero_dipendenti
+FROM employees e JOIN departments d ON d.ID=e.IDdepartments
 GROUP BY d.ID
 ORDER BY numero_dipendenti DESC;
 
