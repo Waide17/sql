@@ -1,4 +1,4 @@
--- Active: 1770801048744@@127.0.0.1@3306@risorseumane
+-- Active: 1771060293989@@127.0.0.1@3306@risorseumane
 CREATE DATABASE if not EXISTS risorseUmane;
 USE risorseUmane;
 
@@ -348,7 +348,6 @@ FROM regions r
 JOIN countries c ON c.IDregions = r.ID
 JOIN locations l ON l.IDcountries = c.ID
 WHERE c.country_id IN ('IT', 'DE', 'CA', 'FR')
-ORDER BY r.region_name, c.country_name;
 
 
 -- 12. mostrare per ogni department il totale degli employee che ci lavorano
@@ -356,4 +355,3 @@ SELECT d.ID, d.department_name, COUNT(e.ID) AS numero_dipendenti
 FROM departments d
 LEFT JOIN employees e ON e.IDdepartments = d.ID
 GROUP BY d.ID, d.department_name
-ORDER BY numero_dipendenti DESC;
